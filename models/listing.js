@@ -1,0 +1,24 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const listingSchema = Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+    default:
+      "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?ixlib=rb-4.0.3",
+    set: (v) =>
+      v === ""
+        ? "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?ixlib=rb-4.0.3"
+        : v,
+  },
+  description: String,
+  price: Number,
+  location: String,
+  country: String,
+});
+const Listing = mongoose.model("Listing", listingSchema);
+module.exports = Listing;

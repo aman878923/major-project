@@ -1,0 +1,49 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-7">
+        <h1>listing details:</h1>
+        <div class="card custom-card">
+          <div class="card-img" >
+            <img
+              src= "<%= listing.image %>""
+              class="card-img-top t-img"
+              alt="Listing Image"
+              style="height: 20rem; "
+            />
+          </div>
+          <div class="card-body">
+            <h5 class="card-title"><%= listing.title %></h5>
+            <p class="card-text"><%= listing.description %></p>
+            <p class="card-text">
+              <strong>Location:</strong> <%= listing.location %>
+            </p>
+            <p class="card-text">
+              <strong>Country:</strong> <%= listing.country %>
+            </p>
+            <p class="card-text">
+              <strong>Price:</strong> &#x20b9;<%=
+              listing.price.toLocaleString("en-IN") %>
+            </p>
+            <div class="btn-group" style="width: 100%">
+              <a href="/listings/<%= listing._id %>/edit" style="margin: 10px"
+                ><button style="margin: 2rem" class="btn btn-primary">
+                  Update
+                </button></a
+              >
+              <form
+                style="margin: 10px"
+                action="/listings/<%= listing._id %>?_method=DELETE"
+                method="post"
+              >
+                <button type="submit" class="btn btn-primary " style="background-color: rgb(15, 14, 14) !important;">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
