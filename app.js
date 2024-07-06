@@ -17,11 +17,13 @@ const Listing = require("./models/listing.js");
 const WrapAsync = require("./utils/WrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema } = require("./schema.js");
+const Review = require("./models/review.js");
 //connecting mongoose
 //sudo systemctl start mongod
 // getting-started.js
 const mongoose = require("mongoose");
 const { title } = require("process");
+const { log } = require("console");
 
 main()
   .then((res) => console.log("mongoose connected"))
@@ -50,7 +52,7 @@ const ValidateListing = (req, res, next) => {
   let result = listingSchema.validate(req.body);
   console.log(result);
   if (result.error) {
-    let errMsg = result.error.details.map((el) => el.message.join(","))
+    let errMsg = result.error.details.map((el) => el.message.join(","));
     throw new ExpressError(404, errMsg);
   } else {
     next();
@@ -133,6 +135,19 @@ app.delete(
     res.redirect("/listings");
   })
 );
+//reviews
+// post route
+app.post("/listings/:id/reviews", async (req, res) => {
+  res.send("working");
+  let { id } = req.params;
+  console.log(req.body);
+  let resultListing = await Listing.findById(id);
+  let newReview = new Review(req.body);
+  resultListing.reviews.push(newReview);
+  await newReview.save();
+  await resultListing.save();
+});
+
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "page not found"));
 });

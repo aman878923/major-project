@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 // const { MAX } = require("uuid");
 const Schema = mongoose.Schema;
-const reviewSchema = new Schema({
+const reviewSchema = Schema({
   comment: String,
   rating: {
     type: Number,
@@ -14,4 +14,6 @@ const reviewSchema = new Schema({
     default: Date.now(),
   },
 });
-module.exports = reviewSchema;
+const Review = mongoose.model("Review", reviewSchema);
+
+module.exports = Review;
