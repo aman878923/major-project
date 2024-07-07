@@ -16,8 +16,10 @@ const methodOverride = require("method-override");
 const Listing = require("./models/listing.js");
 const WrapAsync = require("./utils/WrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
+
 const Review = require("./models/review.js");
+
 //connecting mongoose
 //sudo systemctl start mongod
 // getting-started.js
@@ -52,7 +54,18 @@ const ValidateListing = (req, res, next) => {
   let result = listingSchema.validate(req.body);
   console.log(result);
   if (result.error) {
-    let errMsg = result.error.details.map((el) => el.message.join(","));
+    let errMsg = result.error.details.map((el) => el.message).join(",");
+    throw new ExpressError(404, errMsg);
+  } else {
+    next();
+  }
+};
+//review validation
+const validateReview = (req, res, next) => {
+  let result = reviewSchema.validate(req.body);
+  console.log(result);
+  if (result.error) {
+    let errMsg = result.error.details.map((el) => el.message).join(",");
     throw new ExpressError(404, errMsg);
   } else {
     next();
@@ -103,13 +116,18 @@ app.post(
 //update route
 app.get(
   "/listings/:id/edit",
-  ValidateListing,
-  WrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let listing = await Listing.findById(id);
-    res.render("listings/update.ejs", { listing });
+
+  WrapAsync(async (req, res, next) => {
+    try {
+      let { id } = req.params;
+      let listing = await Listing.findById(id);
+      res.render("listings/update.ejs", { listing });
+    } catch (err) {
+      next(err);
+    }
   })
 );
+//updating data into db
 app.put(
   "/listings/:id",
   WrapAsync(async (req, res) => {
@@ -137,18 +155,22 @@ app.delete(
 );
 //reviews
 // post route
-app.post("/listings/:id/reviews", async (req, res) => {
-  res.send("working");
-  let { id } = req.params;
-  console.log(req.body);
-  let resultListing = await Listing.findById(id);
-  let newReview = new Review(req.body);
-  resultListing.reviews.push(newReview);
-  await newReview.save();
-  await resultListing.save();
-});
-
-app.all("*", (req, res, next) => {
+app.post(
+  "/listings/:id/reviews",
+  validateReview /* for validating the coming  object */,
+  WrapAsync(async (req, res) => {
+    let { id } = req.params;
+    console.log(req.body);
+    let resultListing = await Listing.findById(id);
+    let newReview = new Review(req.body);
+    resultListing.reviews.push(newReview);
+    await newReview.save();
+    await resultListing.save();
+    res.redirect(`/listings/${id}`);
+  })
+);
+//error-handling middlewares
+app.use("*", (req, res, next) => {
   next(new ExpressError(404, "page not found"));
 });
 app.use((err, req, res, next) => {
@@ -156,18 +178,3 @@ app.use((err, req, res, next) => {
   res.render("error.ejs", { err });
   //res.status(statusCode).send(message);
 });
-
-// app.get("/getlisting", (req, res) => {
-//   let sampleList = new Listing({
-//     title: "my new villa",
-//     description: "by the villa",
-//     price: 12200,
-//     location: "calangute,goa",
-//     country: "india",
-//   });
-//   sampleList
-//     .save()
-//     .then((res) => console.log(res))
-//     .catch((err) => console.log(err));
-//   res.send("successful");
-// });

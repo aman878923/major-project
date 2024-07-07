@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 // const { MAX } = require("uuid");
 const Schema = mongoose.Schema;
-const reviewSchema = Schema({
+const reviewSchema = new Schema({
   comment: String,
   rating: {
     type: Number,

@@ -49,7 +49,12 @@
       <hr />
       <div class="review-form">
         <h2>leave a review</h2>
-        <form action="/listings/<%= listing._id %>/reviews" method="post">
+        <form
+          action="/listings/<%= listing._id %>/reviews"
+          method="post"
+          novalidate
+          class="needs-validation"
+        >
           <div class="form-group">
             <label for="rating" class="form-lable">rating :</label>
             <input
@@ -64,11 +69,13 @@
           <div class="form-group">
             <label for="comment" class="form-label">Comments</label>
             <textarea
-              name="reviewComment"
+              name="comment"
               id="comment"
               class="form-control"
-              rows="10"
+              rows="5"
+              required
             ></textarea>
+            <div class="invalid-feedback">please enter some comment</div>
           </div>
           <button type="submit" class="btn btn-primary">submit</button>
         </form>
