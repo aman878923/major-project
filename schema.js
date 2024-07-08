@@ -13,7 +13,7 @@ module.exports.listingSchema = joi.object({
 //validation schema for review
 module.exports.reviewSchema = joi
   .object({
-    rating: joi.number().required(),
+    rating: joi.number().required().min(1).max(5),
     comment: joi.string().required(),
   })
   .required();

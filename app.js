@@ -91,8 +91,10 @@ app.get(
     let { id } = req.params;
     console.log(id);
     let listing = await Listing.findById(id);
-    console.log(listing);
-    res.render("listings/show.ejs", { listing });
+    let reviw = await Review.find({ _id: { $in: listing.reviews } });
+
+    console.log(reviw);
+    res.render("listings/show.ejs", { listing, reviw });
   })
 );
 //insert route
@@ -130,6 +132,7 @@ app.get(
 //updating data into db
 app.put(
   "/listings/:id",
+  ValidateListing,
   WrapAsync(async (req, res) => {
     console.log(req.body);
     let { id } = req.params;
@@ -166,6 +169,17 @@ app.post(
     resultListing.reviews.push(newReview);
     await newReview.save();
     await resultListing.save();
+    res.redirect(`/listings/${id}`);
+  })
+);
+//post delete route for reviews
+app.post(
+  "/listings/:id/reviews/:reviewId",
+  WrapAsync(async (req, res) => {
+    res.send("working");
+    let { id, reviewId } = req.params;
+    await Review.findByIdAndDelete(reviewId);
+    // db.listings.updateMany({},{$unset:{reviews:""}}) for deleting all reviews
     res.redirect(`/listings/${id}`);
   })
 );
