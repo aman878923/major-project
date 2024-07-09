@@ -152,7 +152,7 @@ app.delete(
     console.log("working");
     let { id } = req.params;
     let delListing = await Listing.findByIdAndDelete(id);
-    console.log(delListing);
+    await Review.deleteMany({ _id: { $in: delListing.reviews } });
     res.redirect("/listings");
   })
 );
@@ -176,7 +176,6 @@ app.post(
 app.post(
   "/listings/:id/reviews/:reviewId",
   WrapAsync(async (req, res) => {
-    res.send("working");
     let { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
     // db.listings.updateMany({},{$unset:{reviews:""}}) for deleting all reviews
