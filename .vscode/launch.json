@@ -1,5 +1,17 @@
 {
   "configurations": [
+    
+    {
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "nodemon",
+      "program": "${workspaceFolder}/app.js",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
     {
       "type": "pwa-msedge",
       "name": "Launch Microsoft Edge",
@@ -15,7 +27,7 @@
       "name": "Launch Microsoft Edge in headless mode",
       "request": "launch",
       "runtimeArgs": ["--headless", "--remote-debugging-port=9222"],
-      "url": "file:///home/aman/Documents/major-project/views/layouts/boilerplate.ejs",
+      "url": "/home/aman/.vscode/extensions/ms-edgedevtools.vscode-edge-devtools-2.1.5/out/startpage/index.html", // Provide your project's url to finish configuring
       "presentation": {
         "hidden": true
       }
@@ -24,7 +36,7 @@
       "type": "vscode-edge-devtools.debug",
       "name": "Open Edge DevTools",
       "request": "attach",
-      "url": "file:///home/aman/Documents/major-project/views/layouts/boilerplate.ejs",
+      "url": "/home/aman/.vscode/extensions/ms-edgedevtools.vscode-edge-devtools-2.1.5/out/startpage/index.html", // Provide your project's url to finish configuring
       "presentation": {
         "hidden": true
       }

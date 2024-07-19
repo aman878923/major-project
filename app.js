@@ -5,27 +5,29 @@
 
 const express = require("express");
 const app = express();
-const port = 8080;
+const port = 8000;
 const path = require("path");
 //npm i ejs-mate
 const ejsMate = require("ejs-mate");
 //npm install uuid
+const morgan = require("morgan");
+const flash = require("connect-flash");
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./models/user.js");
 const { v4: uuidv4 } = require("uuid");
 //npm install method-override
 const methodOverride = require("method-override");
-const Listing = require("./models/listing.js");
-const WrapAsync = require("./utils/WrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("./schema.js");
 
-const Review = require("./models/review.js");
-
+const listingsRouter = require("./routes/listings.js");
+const reviewsRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
 //connecting mongoose
 //sudo systemctl start mongod
 // getting-started.js
 const mongoose = require("mongoose");
-const { title } = require("process");
-const { log } = require("console");
+const session = require("express-session");
 
 main()
   .then((res) => console.log("mongoose connected"))
@@ -38,156 +40,85 @@ async function main() {
 }
 
 app.use(express.urlencoded({ extended: true }));
+
 app.use(methodOverride("_method"));
 app.set("view engine ", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-app.listen(port, () => {
-  console.log(`your port is started at ${port} `);
-});
+// Configuration options for the session middleware
+const cookieOptions = {
+  secret: "secretkey", // Secret key used to sign the session ID cookie
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: true, // Save uninitialized sessions
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // Set cookie expiration to 7 days from now
+    maxAge: 7 * 24 * 60 * 60 * 1000, // Maximum age of the cookie in milliseconds (7 days)
+    httpOnly: true, // Prevents client-side JS from reading the cookie
+  },
+};
+//session middleware
+app.use(session(cookieOptions));
+app.use(flash());
+// Initialize Passport
+
+app.use(passport.initialize());
+app.use(passport.session());
+// Configure Passport Local Strategy
+
+passport.use(new localStrategy(User.authenticate()));
+
+// Serialize user for the session
+passport.serializeUser(User.serializeUser());
+// Deserialize user from the session
+passport.deserializeUser(User.deserializeUser());
+
 app.get("/", (req, res) => {
   res.send("get working");
 });
-//listing validation
-const ValidateListing = (req, res, next) => {
-  let result = listingSchema.validate(req.body);
-  console.log(result);
-  if (result.error) {
-    let errMsg = result.error.details.map((el) => el.message).join(",");
-    throw new ExpressError(404, errMsg);
-  } else {
-    next();
-  }
-};
-//review validation
-const validateReview = (req, res, next) => {
-  let result = reviewSchema.validate(req.body);
-  console.log(result);
-  if (result.error) {
-    let errMsg = result.error.details.map((el) => el.message).join(",");
-    throw new ExpressError(404, errMsg);
-  } else {
-    next();
-  }
-};
-//index route
-app.get("/listings", async (req, res) => {
-  const allListing = await Listing.find();
-  //console.log(allListing);
-  res.render("listings/index.ejs", { allListing });
+// Custom Morgan logging middleware configuration
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+    ].join(" ");
+  })
+);
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
 });
-//new route
-app.get(
-  "/listings/new",
-  WrapAsync((req, res) => {
-    res.render("listings/new.ejs");
-  })
-);
-//show route
-app.get(
-  "/listings/:id",
-  WrapAsync(async (req, res) => {
-    let { id } = req.params;
-    console.log(id);
-    let listing = await Listing.findById(id);
-    let reviw = await Review.find({ _id: { $in: listing.reviews } });
-
-    console.log(reviw);
-    res.render("listings/show.ejs", { listing, reviw });
-  })
-);
-//insert route
-app.post(
-  "/listings",
-  ValidateListing,
-  WrapAsync(async (req, res, next) => {
-    const listingNew = new Listing(req.body);
-
-    try {
-      const result = await listingNew.save();
-      console.log(result);
-      res.redirect("/listings");
-    } catch (err) {
-      console.log(err);
-      next(err);
-    }
-  })
-);
-
-//update route
-app.get(
-  "/listings/:id/edit",
-
-  WrapAsync(async (req, res, next) => {
-    try {
-      let { id } = req.params;
-      let listing = await Listing.findById(id);
-      res.render("listings/update.ejs", { listing });
-    } catch (err) {
-      next(err);
-    }
-  })
-);
-//updating data into db
-app.put(
-  "/listings/:id",
-  ValidateListing,
-  WrapAsync(async (req, res) => {
-    console.log(req.body);
-    let { id } = req.params;
-    let updateListing = req.body;
-    let update = await Listing.findByIdAndUpdate(id, updateListing, {
-      new: true,
-    });
-    console.log(update);
-    //redirect to show path
-    res.redirect(`/listings/${id}`);
-  })
-);
-///delete route
-app.delete(
-  "/listings/:id",
-  WrapAsync(async (req, res) => {
-    console.log("working");
-    let { id } = req.params;
-    let delListing = await Listing.findByIdAndDelete(id);
-    await Review.deleteMany({ _id: { $in: delListing.reviews } });
-    res.redirect("/listings");
-  })
-);
-//reviews
-// post route
-app.post(
-  "/listings/:id/reviews",
-  validateReview /* for validating the coming  object */,
-  WrapAsync(async (req, res) => {
-    let { id } = req.params;
-    console.log(req.body);
-    let resultListing = await Listing.findById(id);
-    let newReview = new Review(req.body);
-    resultListing.reviews.push(newReview);
-    await newReview.save();
-    await resultListing.save();
-    res.redirect(`/listings/${id}`);
-  })
-);
-//post delete route for reviews
-app.post(
-  "/listings/:id/reviews/:reviewId",
-  WrapAsync(async (req, res) => {
-    let { id, reviewId } = req.params;
-    await Review.findByIdAndDelete(reviewId);
-    // db.listings.updateMany({},{$unset:{reviews:""}}) for deleting all reviews
-    res.redirect(`/listings/${id}`);
-  })
-);
+app.get("/demouser", async (req, res) => {
+  let fakeUser = new User({
+    email: "abc@gmail.com",
+    username: "aman",
+  });
+  //register the user
+  let regUser = await User.register(fakeUser, /* password */ "helloworld");
+  res.send(regUser);
+});
+// Route middleware setup
+app.use("/listings", listingsRouter); // Mount the listings router at the /listings path
+app.use("/listings/:id/reviews", reviewsRouter); // Mount the reviews router for specific listings
+app.use("/", userRouter);
 //error-handling middlewares
+
 app.use("*", (req, res, next) => {
   next(new ExpressError(404, "page not found"));
 });
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "something went wrong" } = err;
   res.render("error.ejs", { err });
-  //res.status(statusCode).send(message);
+});
+
+app.listen(port, () => {
+  console.log(`your port is started at ${port} `);
 });
