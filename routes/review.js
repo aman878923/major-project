@@ -20,6 +20,7 @@ const validateReview = (req, res, next) => {
 // post route
 router.post(
   "/",
+
   validateReview /* for validating the coming  object */,
   WrapAsync(async (req, res) => {
     let { id } = req.params;
@@ -30,7 +31,7 @@ router.post(
     await newReview.save();
     await resultListing.save();
     req.flash("success", "review added");
-    
+
     res.redirect(`/listings/${id}`);
   })
 );

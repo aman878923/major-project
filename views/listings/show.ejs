@@ -10,6 +10,7 @@
             <img src= "<%= listing.image %>"" class="card-img-top t-img"
             alt="Listing Image" style="height: 20rem; " />
           </div>
+          <p>owned by:<%= owner.username %></p>
           <div class="card-body">
             <h5 class="card-title"><%= listing.title %></h5>
             <p class="card-text"><%= listing.description %></p>
@@ -23,6 +24,10 @@
               <strong>Price:</strong> &#x20b9;<%=
               listing.price.toLocaleString("en-IN") %>
             </p>
+            <!-- currUser is a locals variable which is accessible anywhere -->
+            <!-- here if current user exist and is equal to owner._id the it 
+                will show delete and update buttons-->
+            
             <div class="btn-group" style="width: 100%">
               <a href="/listings/<%= listing._id %>/edit" style="margin: 10px"
                 ><button style="margin: 2rem" class="btn btn-primary">
@@ -43,6 +48,7 @@
                 </button>
               </form>
             </div>
+            
           </div>
         </div>
 

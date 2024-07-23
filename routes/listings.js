@@ -2,10 +2,12 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const Listing = require("../models/listing");
+const User = require("../models/user.js");
+
 const WrapAsync = require("../utils/WrapAsync");
 const { listingSchema } = require("../schema");
 const Review = require("../models/review");
-const { isLoggedin } = require("../middleware.js");
+const { isLoggedin, isOwner } = require("../middleware.js");
 
 // Validation middleware
 const ValidateListing = (req, res, next) => {
@@ -41,8 +43,9 @@ router.get(
     }
 
     let reviw = await Review.find({ _id: { $in: listing.reviews } });
+    let owner = await User.findById(listing.owner);
 
-    res.render("listings/show.ejs", { listing, reviw });
+    res.render("listings/show.ejs", { listing, reviw, owner });
   })
 );
 //create route
@@ -52,6 +55,8 @@ router.post(
   ValidateListing,
   WrapAsync(async (req, res, next) => {
     const listingNew = new Listing(req.body);
+    //save user info in the listing object
+    listingNew.owner = req.user._id;
 
     try {
       const result = await listingNew.save();
@@ -69,6 +74,7 @@ router.post(
 router.get(
   "/:id/edit",
   isLoggedin,
+  isOwner,
 
   WrapAsync(async (req, res, next) => {
     try {
@@ -89,9 +95,11 @@ router.get(
 router.put(
   "/:id",
   ValidateListing,
+  isOwner,
   WrapAsync(async (req, res) => {
     let { id } = req.params;
     let updateListing = req.body;
+
     await Listing.findByIdAndUpdate(id, updateListing, {
       new: true,
     });
@@ -105,6 +113,7 @@ router.put(
 router.delete(
   "/:id",
   isLoggedin,
+  isOwner,
   WrapAsync(async (req, res) => {
     console.log("working");
     let { id } = req.params;
