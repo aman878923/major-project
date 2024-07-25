@@ -14,6 +14,10 @@ const reviewSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 // Middleware function to remove the review reference from the associated listing
 reviewSchema.post("findOneAndDelete", async (doc) => {

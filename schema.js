@@ -7,7 +7,10 @@ module.exports.listingSchema = joi.object({
   location: joi.string().required(),
   country: joi.string().required(),
   price: joi.number().required().min(0),
-  image: joi.string().allow("", null),
+  image: {
+    url: joi.string().allow("", null),
+    filename: joi.string().allow("", null),
+  },
 });
 
 //validation schema for review

@@ -7,7 +7,7 @@
         <h1>listing details:</h1>
         <div class="card custom-card">
           <div class="card-img">
-            <img src= "<%= listing.image %>"" class="card-img-top t-img"
+            <img src= "<%= listing.image.url %>"" class="card-img-top t-img"
             alt="Listing Image" style="height: 20rem; " />
           </div>
           <p>owned by:<%= owner.username %></p>
@@ -27,7 +27,8 @@
             <!-- currUser is a locals variable which is accessible anywhere -->
             <!-- here if current user exist and is equal to owner._id the it 
                 will show delete and update buttons-->
-            
+            <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
+
             <div class="btn-group" style="width: 100%">
               <a href="/listings/<%= listing._id %>/edit" style="margin: 10px"
                 ><button style="margin: 2rem" class="btn btn-primary">
@@ -48,9 +49,10 @@
                 </button>
               </form>
             </div>
-            
+            <%} %>
           </div>
         </div>
+        <% if (currUser) { %>
 
         <hr />
         <div class="review-form">
@@ -62,16 +64,31 @@
             class="needs-validation"
           >
             <div class="form-group">
-              <label for="rating" class="form-lable">rating :</label>
-              <input
-                name="rating"
-                type="range"
-                class="form-range"
-                min="1"
-                max="5"
-                id="rating"
-              />
+              <fieldset class="starability-slot">
+                <legend><label>rating:</label></legend>
+                <input
+                  type="radio"
+                  id="no-rate"
+                  class="input-no-rate"
+                  name="rating"
+                  value="0"
+                  checked
+                  aria-label="No rating."
+                />
+                <input type="radio" id="first-rate1" name="rating" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="rating" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="rating" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="rating" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="rating" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
             </div>
+            <br>
+
             <div class="form-group">
               <label for="comment" class="form-label">Comments</label>
               <textarea
@@ -85,7 +102,9 @@
             </div>
             <button type="submit" class="btn btn-primary">submit</button>
           </form>
+          <%} %>
           <hr />
+
           <div class="reviews">
             <h2>All Reviews</h2>
             <div class="row">
@@ -99,28 +118,33 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <h5 class="card-title">Review Title</h5>
-                    <div class="rating">
-                      <span class="text-warning">&#9733;</span>
-                      <span class="text-warning">&#9733;</span>
-                      <span class="text-warning">&#9733;</span>
-                      <span class="text-muted">&#9733;</span>
-                      <span class="text-muted">&#9733;</span>
-                    </div>
+                    <h4 class="card-title">@<%= review.author.username %></h4>
                   </div>
                   <p class="card-text"><%= review.comment %></p>
+                  <div class="rating">
+                    <p
+                      class="starability-result"
+                      data-rating="<%= review.rating %>"
+                    >
+                      Rated: <%= review.rating %> stars
+                    </p>
+                  </div>
                   <p class="card-text">
                     <small class="text-muted"
                       >Reviewed on: <%= review.createdAt.toLocaleString('en-US',
                       { dateStyle: 'long', timeStyle: 'short' }) %></small
                     >
                   </p>
+                  <% if (currUser && review.author._id.equals(currUser._id)) {
+                  %>
+
                   <form
                     action="/listings/<%= listing._id %>/reviews/<%= review._id %>"
                     method="post"
                   >
                     <button class="btn btn-sm btn-dark mb-3">Delete</button>
                   </form>
+                  <% } %>
                 </div>
               </div>
 

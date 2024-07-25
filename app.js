@@ -2,6 +2,9 @@
 //npm i express
 // npm i ejs
 //npm i mongoose
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
 
 const express = require("express");
 const app = express();
@@ -10,6 +13,7 @@ const path = require("path");
 //npm i ejs-mate
 const ejsMate = require("ejs-mate");
 //npm install uuid
+
 const morgan = require("morgan");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -28,6 +32,7 @@ const userRouter = require("./routes/user.js");
 // getting-started.js
 const mongoose = require("mongoose");
 const session = require("express-session");
+const multer = require("multer");
 
 main()
   .then((res) => console.log("mongoose connected"))
