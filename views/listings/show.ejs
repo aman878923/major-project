@@ -1,158 +1,220 @@
 <% layout("/layouts/boilerplate") %>
 
-<body>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-7">
-        <h1>listing details:</h1>
-        <div class="card custom-card">
-          <div class="card-img">
-            <img src= "<%= listing.image.url %>"" class="card-img-top t-img"
-            alt="Listing Image" style="height: 20rem; " />
-          </div>
-          <p>owned by:<%= owner.username %></p>
-          <div class="card-body">
-            <h5 class="card-title"><%= listing.title %></h5>
-            <p class="card-text"><%= listing.description %></p>
-            <p class="card-text">
-              <strong>Location:</strong> <%= listing.location %>
-            </p>
-            <p class="card-text">
-              <strong>Country:</strong> <%= listing.country %>
-            </p>
-            <p class="card-text">
-              <strong>Price:</strong> &#x20b9;<%=
-              listing.price.toLocaleString("en-IN") %>
-            </p>
-            <!-- currUser is a locals variable which is accessible anywhere -->
-            <!-- here if current user exist and is equal to owner._id the it 
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <h1>listing details:</h1>
+      <div class="card custom-card">
+        <div class="card-img">
+          <img
+            src="<%= listing.image.url %>"
+            class="card-img-top t-img"
+            alt="Listing Image"
+            style="height: 20rem"
+          />
+        </div>
+        <p>owned by:<%= owner.username %></p>
+        <div class="card-body">
+          <h5 class="card-title"><%= listing.title %></h5>
+          <p class="card-text"><%= listing.description %></p>
+          <p class="card-text">
+            <strong>Location:</strong> <%= listing.location %>
+          </p>
+          <p class="card-text">
+            <strong>Country:</strong> <%= listing.country %>
+          </p>
+          <p class="card-text">
+            <strong>Price:</strong> &#x20b9;<%=
+            listing.price.toLocaleString("en-IN") %>
+          </p>
+          <!-- currUser is a locals variable which is accessible anywhere -->
+          <!-- here if current user exist and is equal to owner._id the it 
                 will show delete and update buttons-->
-            <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
+          <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
 
-            <div class="btn-group" style="width: 100%">
-              <a href="/listings/<%= listing._id %>/edit" style="margin: 10px"
-                ><button style="margin: 2rem" class="btn btn-primary">
-                  Update
-                </button></a
+          <div class="btn-group" style="width: 100%">
+            <a href="/listings/<%= listing._id %>/edit" style="margin: 10px"
+              ><button style="margin: 2rem" class="btn btn-primary">
+                Update
+              </button></a
+            >
+            <form
+              style="margin: 10px"
+              action="/listings/<%= listing._id %>?_method=DELETE"
+              method="post"
+            >
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="background-color: rgb(15, 14, 14) !important"
               >
-              <form
-                style="margin: 10px"
-                action="/listings/<%= listing._id %>?_method=DELETE"
-                method="post"
-              >
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  style="background-color: rgb(15, 14, 14) !important"
+                Delete
+              </button>
+            </form>
+          </div>
+          <%} %>
+        </div>
+      </div>
+      <% if (currUser) { %>
+
+      <hr />
+      <div class="review-form">
+        <h2>leave a review</h2>
+        <form
+          action="/listings/<%= listing._id %>/reviews"
+          method="post"
+          novalidate
+          class="needs-validation"
+        >
+          <div class="form-group">
+            <fieldset class="starability-slot">
+              <legend><label>rating:</label></legend>
+              <input
+                type="radio"
+                id="no-rate"
+                class="input-no-rate"
+                name="rating"
+                value="0"
+                checked
+                aria-label="No rating."
+              />
+              <input type="radio" id="first-rate1" name="rating" value="1" />
+              <label for="first-rate1" title="Terrible">1 star</label>
+              <input type="radio" id="first-rate2" name="rating" value="2" />
+              <label for="first-rate2" title="Not good">2 stars</label>
+              <input type="radio" id="first-rate3" name="rating" value="3" />
+              <label for="first-rate3" title="Average">3 stars</label>
+              <input type="radio" id="first-rate4" name="rating" value="4" />
+              <label for="first-rate4" title="Very good">4 stars</label>
+              <input type="radio" id="first-rate5" name="rating" value="5" />
+              <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+          </div>
+          <br />
+
+          <div class="form-group">
+            <label for="comment" class="form-label">Comments</label>
+            <textarea
+              name="comment"
+              id="comment"
+              class="form-control"
+              rows="5"
+              required
+            ></textarea>
+            <div class="invalid-feedback">please enter some comment</div>
+          </div>
+          <button type="submit" class="btn btn-primary">submit</button>
+        </form>
+        <%} %> <% if (!reviw.length==0) { %>
+        <hr />
+        <div class="reviews">
+          <h4>All Reviews</h4>
+          <div class="row">
+            <% for (let review of reviw) {%>
+
+            <div
+              class="card col-5 ms-3 mb-3"
+              style="border: 1px solid rgba(120, 118, 118, 0.886) !important"
+            >
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4 class="card-title">@<%= review.author.username %></h4>
+                </div>
+                <p class="card-text"><%= review.comment %></p>
+                <div class="rating">
+                  <p
+                    class="starability-result"
+                    data-rating="<%= review.rating %>"
+                  >
+                    Rated: <%= review.rating %> stars
+                  </p>
+                </div>
+                <p class="card-text">
+                  <small class="text-muted"
+                    >Reviewed on: <%= review.createdAt.toLocaleString('en-US', {
+                    dateStyle: 'long', timeStyle: 'short' }) %></small
+                  >
+                </p>
+                <% if (currUser && review.author._id.equals(currUser._id)) { %>
+
+                <form
+                  action="/listings/<%= listing._id %>/reviews/<%= review._id %>"
+                  method="post"
                 >
-                  Delete
-                </button>
-              </form>
+                  <button class="btn btn-sm btn-dark mb-3">Delete</button>
+                </form>
+                <% } %>
+              </div>
             </div>
-            <%} %>
+
+            <% } %>
           </div>
         </div>
-        <% if (currUser) { %>
+
+        <% } %>
 
         <hr />
-        <div class="review-form">
-          <h2>leave a review</h2>
-          <form
-            action="/listings/<%= listing._id %>/reviews"
-            method="post"
-            novalidate
-            class="needs-validation"
-          >
-            <div class="form-group">
-              <fieldset class="starability-slot">
-                <legend><label>rating:</label></legend>
-                <input
-                  type="radio"
-                  id="no-rate"
-                  class="input-no-rate"
-                  name="rating"
-                  value="0"
-                  checked
-                  aria-label="No rating."
-                />
-                <input type="radio" id="first-rate1" name="rating" value="1" />
-                <label for="first-rate1" title="Terrible">1 star</label>
-                <input type="radio" id="first-rate2" name="rating" value="2" />
-                <label for="first-rate2" title="Not good">2 stars</label>
-                <input type="radio" id="first-rate3" name="rating" value="3" />
-                <label for="first-rate3" title="Average">3 stars</label>
-                <input type="radio" id="first-rate4" name="rating" value="4" />
-                <label for="first-rate4" title="Very good">4 stars</label>
-                <input type="radio" id="first-rate5" name="rating" value="5" />
-                <label for="first-rate5" title="Amazing">5 stars</label>
-              </fieldset>
-            </div>
-            <br>
-
-            <div class="form-group">
-              <label for="comment" class="form-label">Comments</label>
-              <textarea
-                name="comment"
-                id="comment"
-                class="form-control"
-                rows="5"
-                required
-              ></textarea>
-              <div class="invalid-feedback">please enter some comment</div>
-            </div>
-            <button type="submit" class="btn btn-primary">submit</button>
-          </form>
-          <%} %>
-          <hr />
-
-          <div class="reviews">
-            <h2>All Reviews</h2>
-            <div class="row">
-              <% for (let review of reviw) {%>
-
-              <div
-                class="card col-5 ms-3 mb-3"
-                style="border: 1px solid rgba(120, 118, 118, 0.886) !important"
-              >
-                <div class="card-body">
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <h4 class="card-title">@<%= review.author.username %></h4>
-                  </div>
-                  <p class="card-text"><%= review.comment %></p>
-                  <div class="rating">
-                    <p
-                      class="starability-result"
-                      data-rating="<%= review.rating %>"
-                    >
-                      Rated: <%= review.rating %> stars
-                    </p>
-                  </div>
-                  <p class="card-text">
-                    <small class="text-muted"
-                      >Reviewed on: <%= review.createdAt.toLocaleString('en-US',
-                      { dateStyle: 'long', timeStyle: 'short' }) %></small
-                    >
-                  </p>
-                  <% if (currUser && review.author._id.equals(currUser._id)) {
-                  %>
-
-                  <form
-                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>"
-                    method="post"
-                  >
-                    <button class="btn btn-sm btn-dark mb-3">Delete</button>
-                  </form>
-                  <% } %>
-                </div>
-              </div>
-
-              <% } %>
-            </div>
-          </div>
+        <div>
+          <h4>Where You'll Be</h4>
+          <div id="map"></div>
         </div>
       </div>
     </div>
   </div>
-</body>
+</div>
+<script>
+  var map, marker;
+  /*Map Initialization*/
+  function initMap1() {
+    map = new mappls.Map("map", {
+      center: [28.09, 78.3],
+      zoom: 2,
+    });
+    map.addListener("load", function () {
+      var optional_config = {
+        /* location: [28.61, 77.23], */
+        region: "IND",
+        height: 200,
+        /* geolocation:true,
+              pod:'City',
+              bridge:true,
+              tokenizeAddress:true,
+              filter:'cop:9QGXAM',
+              hyperLocal:true, //Default is false. Location parameter is mandatory to use this parameter.
+              distance:true,
+              width:300,
+              height:300,
+              clearButton:false, //to hide cross button, which is right side of search input
+              blank_callback:function(){console.log("called when click on cross button or input value become blank");} */
+      };
+      new mappls.search("<%= listing.title %>", optional_config, callback);
+      function callback(data) {
+        //  alert("Data: " + JSON.stringify(data, null, 2));
+        console.log(data);
+        if (data) {
+          var dt = data[0];
+          if (!dt) return false;
+          var eloc = dt.eLoc;
+          var place = dt.placeName + ", " + dt.placeAddress;
+          /*Use elocMarker Plugin to add marker*/
+          if (marker) marker.remove();
+          mappls.pinMarker(
+            {
+              map: map,
+              pin: eloc,
+              popupHtml: place,
+              popupOptions: {
+                openPopup: true,
+              },
+              clustersOptions: { color: "red", bgcolor: "red" },
+            },
+            function (data) {
+              marker = data;
+              marker.fitbounds();
+            }
+          );
+        }
+      }
+    });
+  }
+</script>

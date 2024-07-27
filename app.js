@@ -78,9 +78,9 @@ passport.serializeUser(User.serializeUser());
 // Deserialize user from the session
 passport.deserializeUser(User.deserializeUser());
 
-app.get("/", (req, res) => {
-  res.send("get working");
-});
+// app.get("/", (req, res) => {
+//   res.send("get working");
+// });
 // Custom Morgan logging middleware configuration
 app.use(
   morgan(function (tokens, req, res) {

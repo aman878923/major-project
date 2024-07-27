@@ -1,6 +1,132 @@
 <% layout("/layouts/boilerplate") %>
+<style>
+  /* styles.css */
+
+  .filters {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 15vh;
+    margin: 0;
+  }
+
+  .icon-filter-bar {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .icon-filter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    opacity: 0.7;
+  }
+  .icon-filter-item:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+  .icon-filter-item i {
+    font-size: 32px;
+    margin-bottom: 5px;
+  }
+  filters {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .icon-filter-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .icon-filter-item {
+    flex: 0 0 auto;
+    margin-right: 15px;
+  }
+
+  @media (max-width: 768px) {
+    .icon-filter-bar {
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+    }
+
+    .icon-filter-bar::-webkit-scrollbar {
+      display: none; /* WebKit */
+    }
+  }
+</style>
 <body>
-  <h1>all listing</h1>
+  <div class="filters">
+    <div class="icon-filter-bar">
+      <div class="icon-filter-item">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+        <span>Trending</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-ticket-alt"></i>
+        <span>Icons</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-swimming-pool"></i>
+        <span>Amazing pools</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-mountain"></i>
+        <span>Amazing views</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-tractor"></i>
+        <span>Farms</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-paint-brush"></i>
+        <span>Design</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-hiking"></i>
+        <span>Top of the world</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-water"></i>
+        <span>Lakefront</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-space-shuttle"></i>
+        <span>OMG!</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-tree"></i>
+        <span>Countryside</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-umbrella-beach"></i>
+        <span>Beachfront</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fas fa-home"></i>
+        <span>Cabins</span>
+      </div>
+      <div class="icon-filter-item">
+        <i class="fa-solid fa-tree"></i>
+        <span>Treehouses</span>
+      </div>
+      <div class="form-check-reverse form-switch">
+        <input class="form-check-input" type="checkbox" id="filterSwitch" />
+        <label class="form-check-label" for="filterSwitch">Display Taxes</label>
+      </div>
+    </div>
+  </div>
   <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
     <% for (let listing of allListing) { %>
     <a href="/listings/<%= listing._id %>">
@@ -15,13 +141,41 @@
         <div class="card-body">
           <p class="card-text">
             <b> <%= listing.title%> </b> <br />
-            &#x20b9;<%= listing.price.toLocaleString("en-IN") %>
+            <span class="price" data-original-price="<%= listing.price %>">
+              &#x20b9;<%= listing.price.toLocaleString("en-IN") %></span
+            >
+            <span class="gst-text" style="display: none"> (incl. 18% GST)</span>
           </p>
         </div>
       </div>
     </a>
     <% } %>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const filterSwitch = document.getElementById("filterSwitch");
+      const priceElements = document.querySelectorAll(".price");
+      const gstTextElements = document.querySelectorAll(".gst-text");
+      const gstRate = 0.18; // 18% GST
+
+      filterSwitch.addEventListener("change", function () {
+        priceElements.forEach((element, index) => {
+          const originalPrice = parseFloat(element.dataset.originalPrice);
+          const priceWithGST = originalPrice * (1 + gstRate);
+
+          if (this.checked) {
+            // Display price with GST
+            element.textContent = `₹${priceWithGST.toLocaleString("en-IN")}`;
+            gstTextElements[index].style.display = "inline";
+          } else {
+            // Display original price
+            element.textContent = `₹${originalPrice.toLocaleString("en-IN")}`;
+            gstTextElements[index].style.display = "none";
+          }
+        });
+      });
+    });
+  </script>
   <!-- <form action="/listings/new" method="get">
       <button>click to create new</button>
     </form> -->
