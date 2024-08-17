@@ -32,14 +32,15 @@ const userRouter = require("./routes/user.js");
 // getting-started.js
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const multer = require("multer");
-
+const URL = process.env.ATLASPASSWORD;
 main()
   .then((res) => console.log("mongoose connected"))
   .catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+  await mongoose.connect(URL/* "mongodb://127.0.0.1:27017/wanderlust" */);
 
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
@@ -51,8 +52,19 @@ app.set("view engine ", "ejs");
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+const store = MongoStore.create({
+  mongoUrl: URL,
+  crypto: {
+    secret:"secretkey"
+  },
+  touchAfter:24*3600,
+})
+store.on("error",(err) => {
+  console.log("error in mongo session");
+})
 // Configuration options for the session middleware
 const cookieOptions = {
+  store,
   secret: "secretkey", // Secret key used to sign the session ID cookie
   resave: false, // Don't save session if unmodified
   saveUninitialized: true, // Save uninitialized sessions
@@ -62,6 +74,7 @@ const cookieOptions = {
     httpOnly: true, // Prevents client-side JS from reading the cookie
   },
 };
+
 //session middleware
 app.use(session(cookieOptions));
 app.use(flash());
