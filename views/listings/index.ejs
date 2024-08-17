@@ -16,6 +16,8 @@
     gap: 20px;
     padding: 20px;
     background-color: #fff;
+    border: 1px solid rgb(230, 225, 225);
+
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
@@ -65,6 +67,15 @@
       display: none; /* WebKit */
     }
   }
+  .form-switch {
+    border: 1px solid rgb(230, 225, 225);
+    width: fit-content;
+    padding: 11px 11px 11px 11px;
+    border-radius: 8px;
+    margin: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
 </style>
 <body>
   <div class="filters">
@@ -113,20 +124,24 @@
         <i class="fas fa-umbrella-beach"></i>
         <span>Beachfront</span>
       </div>
-      <div class="icon-filter-item">
+      <!-- <div class="icon-filter-item">
         <i class="fas fa-home"></i>
         <span>Cabins</span>
       </div>
       <div class="icon-filter-item">
         <i class="fa-solid fa-tree"></i>
         <span>Treehouses</span>
-      </div>
-      <div class="form-check-reverse form-switch">
-        <input class="form-check-input" type="checkbox" id="filterSwitch" />
-        <label class="form-check-label" for="filterSwitch">Display Taxes</label>
-      </div>
+      </div> -->
+
+    </div>
+    <div class="form-check-reverse form-switch">
+      <input class="form-check-input" type="checkbox" id="filterSwitch" />
+      <label class="form-check-label" for="filterSwitch"></label>
+        Total After Taxes</label
+      >
     </div>
   </div>
+
   <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
     <% for (let listing of allListing) { %>
     <a href="/listings/<%= listing._id %>">

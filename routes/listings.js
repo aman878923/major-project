@@ -5,19 +5,19 @@ const { isLoggedin, isOwner } = require("../middleware.js");
 const WrapAsync = require("../utils/WrapAsync");
 const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
+
+
 const upload = multer({ storage });
 // Index route
-router
-  .route("/")
-  .get(WrapAsync(listingsController.index))
-  .post(
-    isLoggedin,
-    
-    upload.single("image"),
-    listingsController.validateListing,
-    WrapAsync(listingsController.create)
-  );
+router.route("/").get(WrapAsync(listingsController.index)).post(
+  isLoggedin,
 
+  upload.single("image"),
+  listingsController.validateListing,
+  WrapAsync(listingsController.create)
+);
+//search route
+router.get("/search", WrapAsync(listingsController.search));
 // New route
 router.get("/new", isLoggedin, listingsController.renderNewForm);
 

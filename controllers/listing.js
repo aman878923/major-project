@@ -6,6 +6,7 @@ const Review = require("../models/review");
 const ExpressError = require("../utils/ExpressError");
 const { listingSchema } = require("../schema.js");
 
+
 const listingsController = {
   // Index - Show all listings
   index: async (req, res) => {
@@ -83,6 +84,27 @@ const listingsController = {
     req.flash("success", "listing updated");
     res.redirect(`/listings/${id}`);
   },
+  //to search a listing
+  search: async(req, res) => {
+  
+    const searchText = req.query.search;
+    const query = {
+      $or: [
+        { title: { $regex: new RegExp(searchText, 'i') } }, // Case-insensitive search in title
+        { description: { $regex: new RegExp(searchText, 'i') } }, // Case-insensitive search in description
+        { location: { $regex: new RegExp(searchText, 'i') } } // Case-insensitive search in location
+      ]
+    };
+  
+    // Find listings matching the query
+    const allListing = await Listing.find(query);
+    
+    // Send response
+    
+    res.render("listings/index.ejs", { allListing});
+    console.log(req.query);
+    
+  },
 
   // Delete - Delete a listing
   delete: async (req, res) => {
@@ -92,7 +114,7 @@ const listingsController = {
     await Review.deleteMany({ _id: { $in: delListing.reviews } });
     res.redirect("/listings");
   },
-
+  
   // Validation middleware
   validateListing: (req, res, next) => {
     let result = listingSchema.validate(req.body);
