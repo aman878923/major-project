@@ -55,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const store = MongoStore.create({
   mongoUrl: URL,
   crypto: {
-    secret:"secretkey"
+    secret:process.env.SECRET
   },
   touchAfter:24*3600,
 })
@@ -65,7 +65,7 @@ store.on("error",(err) => {
 // Configuration options for the session middleware
 const cookieOptions = {
   store,
-  secret: "secretkey", // Secret key used to sign the session ID cookie
+  secret: process.env.SECRET, // Secret key used to sign the session ID cookie
   resave: false, // Don't save session if unmodified
   saveUninitialized: true, // Save uninitialized sessions
   cookie: {
