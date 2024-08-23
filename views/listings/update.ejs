@@ -1,6 +1,7 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row ">
-  <div class=" col col-6 offset-3">
+<div class="container  mt-3 ">
+  <div class=" row justify-content-center">
+    <div class="col-md-6">
     <h1 class="form-head">Update Listing</h1>
     <form
       action="/listings/<%= listing._id %>?_method=PUT"
@@ -100,5 +101,6 @@
 
       
     </form>
+  </div>
   </div>
 </div>
