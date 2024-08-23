@@ -1,52 +1,41 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-  <div class="col col-6 offset-3">
+<div class="container  mt-3">
+  <div class="row justify-content-center">
+  <div class="col-md-6">
     <form action="/signup" method="post" class="needs-validation" novalidate>
      
-        <div class="row justify-content-center">
-          
-            <div class="card">
-              <div class="card-header">
-                <h3 class="text-center">Sign Up on wanderLust</h3>
-              </div>
-              <div class="card-body">
-                <form action="/signup" method="POST">
-                  <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Please choose a username.</div>
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Please provide a valid email.</div>
-                  </div>
-                  <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="valid-feedback">Looks good!</div>
-                    <div class="invalid-feedback">Please enter a password.</div>
-                  </div>
-                  <!-- <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    <div class="valid-feedback">Passwords match!</div>
-                    <div class="invalid-feedback">Passwords do not match.</div>
-                  </div> -->
-                  <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Sign Up</button>
-                  </div>
-                </form>
-              </div>
-            </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Sign Up on wanderLust</h3>
           </div>
-        </div>
-      </div>
-      
- </form>
-              </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Please choose a username.</div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Please provide a valid email.</div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+              <div class="valid-feedback">Looks good!</div>
+              <div class="invalid-feedback">Please enter a password.</div>
+            </div>
+            <!-- Uncomment if you want to include the confirm password field -->
+            <!-- <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+              <div class="valid-feedback">Passwords match!</div>
+              <div class="invalid-feedback">Passwords do not match.</div>
+            </div> -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Sign Up</button>
             </div>
           </div>
         </div>
