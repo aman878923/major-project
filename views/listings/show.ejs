@@ -162,45 +162,55 @@
     </div>
   </div>
 </div>
-<script>
-        // Initialize the map
-        var map = L.map('map').setView([51.505, -0.09], 13); // Default location (London)
+ <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the map
+            var map = L.map('map').setView([51.505, -0.09], 13); // Default location (London)
 
-        // Load OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+            // Load OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-        // Marker for the searched location
-        var marker;
+            // Marker for the searched location
+            var marker;
 
-        
+            // Replace this value with dynamic data from your server-side template engine
+            var location = "<%= listing.location %>"; // Example: "New York"
+            
+            if (location) {
+                // Fetch data from Nominatim API
+                var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            var lat = parseFloat(data[0].lat);
+                            var lon = parseFloat(data[0].lon);
+                            var displayName = data[0].display_name;
 
-            // Fetch data from Nominatim API
-            var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent("<%= listing.location %>")}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        var lat = data[0].lat;
-                        var lon = data[0].lon;
-                        var displayName = data[0].display_name;
+                            // Update map view and add marker
+                            map.setView([lat, lon], 13);
 
-                        // Update map view and add marker
-                        map.setView([lat, lon], 13);
-                        if (marker) {
-                            map.removeLayer(marker); // Remove the previous marker
+                            if (marker) {
+                                map.removeLayer(marker); // Remove the previous marker
+                            }
+
+                            marker = L.marker([lat, lon]).addTo(map);
+                            marker.bindPopup(`<b>${displayName}</b>`).openPopup();
+                        } else {
+                            alert('Location not found.');
                         }
-                        marker = L.marker([lat, lon]).addTo(map);
-                        marker.bindPopup(`<b>${displayName}</b>`).openPopup();
-                    } else {
-                        alert('Location not found.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching location:', error);
-                    alert('Error fetching location. Please try again.');
-                });
-        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching location:', error);
+                        alert('Error fetching location. Please try again.');
+                    });
+            } else {
+                console.error("No location provided.");
+                alert("No location provided to display on the map.");
+            }
+        });
     </script>
