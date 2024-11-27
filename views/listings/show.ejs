@@ -163,58 +163,44 @@
   </div>
 </div>
 <script>
-  var map, marker;
-  /*Map Initialization*/
-  function initMap1() {
-    map = new mappls.Map("map", {
-      center: [28.09, 78.3],
-      zoom: 2,
-    });
-    map.addListener("load", function () {
-      var optional_config = {
-        /* location: [28.61, 77.23], */
-        region: "IND",
-        height: 200,
-        /* geolocation:true,
-              pod:'City',
-              bridge:true,
-              tokenizeAddress:true,
-              filter:'cop:9QGXAM',
-              hyperLocal:true, //Default is false. Location parameter is mandatory to use this parameter.
-              distance:true,
-              width:300,
-              height:300,
-              clearButton:false, //to hide cross button, which is right side of search input
-              blank_callback:function(){console.log("called when click on cross button or input value become blank");} */
-      };
-      new mappls.search("<%= listing.title %>", optional_config, callback);
-      function callback(data) {
-        //  alert("Data: " + JSON.stringify(data, null, 2));
-        console.log(data);
-        if (data) {
-          var dt = data[0];
-          if (!dt) return false;
-          var eloc = dt.eLoc;
-          var place = dt.placeName + ", " + dt.placeAddress;
-          /*Use elocMarker Plugin to add marker*/
-          if (marker) marker.remove();
-          mappls.pinMarker(
-            {
-              map: map,
-              pin: eloc,
-              popupHtml: place,
-              popupOptions: {
-                openPopup: true,
-              },
-              clustersOptions: { color: "red", bgcolor: "red" },
-            },
-            function (data) {
-              marker = data;
-              marker.fitbounds();
-            }
-          );
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13); // Default location (London)
+
+        // Load OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Marker for the searched location
+        var marker;
+
+        
+
+            // Fetch data from Nominatim API
+            var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(<%= listing.location %>)}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var displayName = data[0].display_name;
+
+                        // Update map view and add marker
+                        map.setView([lat, lon], 13);
+                        if (marker) {
+                            map.removeLayer(marker); // Remove the previous marker
+                        }
+                        marker = L.marker([lat, lon]).addTo(map);
+                        marker.bindPopup(`<b>${displayName}</b>`).openPopup();
+                    } else {
+                        alert('Location not found.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching location:', error);
+                    alert('Error fetching location. Please try again.');
+                });
         }
-      }
-    });
-  }
-</script>
+    </script>
