@@ -57,7 +57,7 @@
       <% } %>
       <% if (currUser) { %>
       <li class="nav-item">
-        <%= currUser.username %>
+       <a class="nav-link" href="/listings" > <%= currUser.username %></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/logout"><b>Log Out</b></a>
