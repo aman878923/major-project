@@ -1,69 +1,154 @@
+<nav
+  class="navbar navbar-expand-lg py-3 navbar-light bg-white fixed-top shadow-sm"
+>
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center" href="/listings">
+      <i class="fa-regular fa-compass fs-3 text-primary me-2"></i>
+      <span class="fw-bold">WanderLust</span>
+    </a>
+
+    <!-- Mobile Toggle -->
+    <button
+      class="navbar-toggler border-0"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Search Bar -->
+      <form
+        class="nav-search mx-lg-auto"
+        action="/listings/search"
+        method="GET"
+      >
+        <div class="input-group">
+          <input
+            type="search"
+            class="form-control search-input"
+            placeholder="Search destinations..."
+            name="search"
+          />
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Navigation Links -->
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/listings">Explore</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/listings/new">List Property</a>
+        </li>
+
+        <% if (!currUser) { %>
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/signup">Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-primary px-3" href="/login">Log In</a>
+        </li>
+        <% } else { %>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            <i class="fas fa-user-circle me-1"></i>
+            <%= currUser.username %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/listings">My Listings</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+          </ul>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <style>
-  .search-bar {
-    display: flex;
-    width: 100%; /* Full width for responsiveness */
-    max-width: 600px; /* Max width to prevent it from being too large on bigger screens */
-    margin: 0 auto; /* Center the search bar */
+  .navbar {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
   }
-  .search-bar input {
-    border-radius: 50px 50px 50px 50px; /* Rounded left side */
-    border: 1px solid #ced4da; /* Add border */
-    flex: 1; /* Make the input take available space */
+
+  .nav-search {
+    width: 100%;
+    max-width: 500px;
   }
-  .search-bar button {
-    border-radius: 50px 50px 50px 50px; /* Rounded right side */
-    background-color: #ff3b30;
-    color: white;
-    border: 1px solid #ff3b30; /* Add border */
+
+  .search-input {
+    border-radius: 50px 0 0 50px;
+    border: 1px solid #dee2e6;
+    padding-left: 1.5rem;
   }
-  .navbar-nav .nav-link {
-    padding-left: 15px;
-    padding-right: 15px;
+
+  .search-input:focus {
+    box-shadow: none;
+    border-color: #0d6efd;
+  }
+
+  .nav-search .btn {
+    border-radius: 0 50px 50px 0;
+    padding: 0.6rem 1.5rem;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: #0d6efd;
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+
+  .dropdown-item {
+    padding: 0.7rem 1.5rem;
+  }
+
+  .dropdown-item:active {
+    background-color: #0d6efd;
+  }
+
+  @media (max-width: 991.98px) {
+    .nav-search {
+      margin: 1rem 0;
+    }
+
+    .navbar-nav {
+      padding: 1rem 0;
+    }
+
+    .nav-link {
+      padding: 0.5rem 0;
+    }
+
+    .btn {
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+  }
+
+  /* Add margin to main content to account for fixed navbar */
+  body {
+    padding-top: 76px;
   }
 </style>
-</head>
-<body>
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-<div class="container-fluid">
-  <a class="navbar-brand" href="/listing">
-    <i class="fa-regular fa-compass"></i>
-  </a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="background-color: rgba(255, 255, 255, 0.727)">
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a class="nav-link" href="/listings">Explore</a>
-      </li>
-    </ul>
-    <div class="d-flex flex-grow-1 justify-content-center">
-      <form class="search-bar d-flex" role="search" action="/listings/search?_method=PUT" method="GET">
-        <input type="search" id="search" name="search" class="form-control" placeholder="Search destinations" />
-        <button class="btn" type="submit">Search</button>
-      </form>
-    </div>
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="/listings/new">Add Your Place</a>
-      </li>
-      <% if (!currUser) { %>
-      <li class="nav-item">
-        <a class="nav-link" href="/signup"><b>Signup</b></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/login"><b>Log In</b></a>
-      </li>
-      <% } %>
-      <% if (currUser) { %>
-      <li class="nav-item">
-       <a class="nav-link" href="/listings" > <%= currUser.username %></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/logout"><b>Log Out</b></a>
-      </li>
-      <% } %>
-    </ul>
-  </div>
-</div>
-</nav>

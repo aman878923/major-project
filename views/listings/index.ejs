@@ -1,197 +1,207 @@
 <% layout("/layouts/boilerplate") %>
+
+<!-- Hero Section -->
+<div class="hero-section py-5 mb-5 bg-light">
+  <div class="container">
+    <h1 class="display-4 text-center mb-4 fw-bold">Discover Amazing Places</h1>
+    <p class="lead text-center text-muted mb-0">
+      Find and book unique accommodations around the world
+    </p>
+  </div>
+</div>
+
+<!-- Filters Section -->
+<div class="container mb-5">
+  <div class="filters-wrapper">
+    <div class="filters-scroll">
+      <div class="d-flex gap-4 flex-nowrap">
+        <div class="filter-item">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>Trending</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-swimming-pool"></i>
+          <span>Pools</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-mountain"></i>
+          <span>Views</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-tractor"></i>
+          <span>Farms</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-paint-brush"></i>
+          <span>Design</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-water"></i>
+          <span>Lakefront</span>
+        </div>
+        <div class="filter-item">
+          <i class="fas fa-umbrella-beach"></i>
+          <span>Beach</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tax-toggle">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="filterSwitch" />
+        <label class="form-check-label" for="filterSwitch"
+          >Show Total with Taxes</label
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="container">
+  <div class="row g-4">
+    <% for (let listing of allListing) { %>
+    <div class="col-12 col-md-6 col-lg-4">
+      <a href="/listings/<%= listing._id %>" class="text-decoration-none">
+        <div class="listing-card">
+          <div class="listing-img-wrapper">
+            <img
+              src="<%= listing.image.url %>"
+              class="listing-img"
+              alt="<%= listing.title %>"
+            />
+          </div>
+          <div class="listing-content">
+            <h5 class="listing-title"><%= listing.title %></h5>
+            <p class="listing-price">
+              <span class="price" data-original-price="<%= listing.price %>">
+                ₹<%= listing.price.toLocaleString("en-IN") %>
+              </span>
+              <span class="gst-text" style="display: none">(incl. GST)</span>
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <% } %>
+  </div>
+</div>
+
 <style>
-  /* styles.css */
+  .hero-section {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-radius: 0 0 2rem 2rem;
+  }
 
-  .filters {
-    font-family: Arial, sans-serif;
+  .filters-wrapper {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    height: 15vh;
-    margin: 0;
   }
 
-  .icon-filter-bar {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid rgb(230, 225, 225);
-
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  .filters-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-grow: 1;
   }
 
-  .icon-filter-item {
+  .filters-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    font-size: 14px;
-    color: #333;
-    opacity: 0.7;
-  }
-  .icon-filter-item:hover {
-    opacity: 1;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
     cursor: pointer;
+    transition: all 0.3s ease;
   }
-  .icon-filter-item i {
-    font-size: 32px;
-    margin-bottom: 5px;
+
+  .filter-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
   }
-  filters {
-    overflow-x: auto;
+
+  .filter-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #212529;
+  }
+
+  .filter-item span {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .tax-toggle {
+    padding-left: 2rem;
+    border-left: 1px solid #dee2e6;
+  }
+
+  .listing-card {
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+  }
+
+  .listing-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .listing-img-wrapper {
+    position: relative;
+    padding-top: 66.67%;
+    overflow: hidden;
+  }
+
+  .listing-img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .icon-filter-bar {
-    display: flex;
-    flex-wrap: nowrap;
-    padding-bottom: 10px;
+  .listing-content {
+    padding: 1.5rem;
   }
 
-  .icon-filter-item {
-    flex: 0 0 auto;
-    margin-right: 15px;
+  .listing-title {
+    color: #212529;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .listing-price {
+    color: #0d6efd;
+    font-weight: 600;
+    margin: 0;
   }
 
   @media (max-width: 768px) {
-    .icon-filter-bar {
-      overflow-x: scroll;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* Internet Explorer 10+ */
+    .filters-wrapper {
+      flex-direction: column;
+      gap: 1rem;
     }
 
-    .icon-filter-bar::-webkit-scrollbar {
-      display: none; /* WebKit */
+    .tax-toggle {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid #dee2e6;
+      padding-top: 1rem;
+      width: 100%;
+      text-align: center;
     }
-  }
-  .form-switch {
-    border: 1px solid rgb(230, 225, 225);
-    width: fit-content;
-    padding: 11px 11px 11px 11px;
-    border-radius: 8px;
-    margin: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
   }
 </style>
-<body>
-  <div class="filters">
-    <div class="icon-filter-bar">
-      <div class="icon-filter-item">
-        <i class="fa-solid fa-arrow-trend-up"></i>
-        <span>Trending</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-ticket-alt"></i>
-        <span>Icons</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-swimming-pool"></i>
-        <span>Amazing pools</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-mountain"></i>
-        <span>Amazing views</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-tractor"></i>
-        <span>Farms</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-paint-brush"></i>
-        <span>Design</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-hiking"></i>
-        <span>Top of the world</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-water"></i>
-        <span>Lakefront</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-space-shuttle"></i>
-        <span>OMG!</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-tree"></i>
-        <span>Countryside</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fas fa-umbrella-beach"></i>
-        <span>Beachfront</span>
-      </div>
-      <!-- <div class="icon-filter-item">
-        <i class="fas fa-home"></i>
-        <span>Cabins</span>
-      </div>
-      <div class="icon-filter-item">
-        <i class="fa-solid fa-tree"></i>
-        <span>Treehouses</span>
-      </div> -->
-
-    </div>
-    <div class="form-check-reverse form-switch">
-      <input class="form-check-input" type="checkbox" id="filterSwitch" />
-      <label class="form-check-label" for="filterSwitch"></label>
-        Total After Taxes</label
-      >
-    </div>
-  </div>
-
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
-    <% for (let listing of allListing) { %>
-    <a href="/listings/<%= listing._id %>">
-      <div class="card col">
-        <img
-          src="<%= listing.image.url %>"
-          class="card-img-top"
-          style="height: 20rem"
-          alt="..."
-        />
-        <div class="card-img-overlay"></div>
-        <div class="card-body">
-          <p class="card-text">
-            <b> <%= listing.title%> </b> <br />
-            <span class="price" data-original-price="<%= listing.price %>">
-              &#x20b9;<%= listing.price.toLocaleString("en-IN") %></span
-            >
-            <span class="gst-text" style="display: none"> (incl. 18% GST)</span>
-          </p>
-        </div>
-      </div>
-    </a>
-    <% } %>
-  </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const filterSwitch = document.getElementById("filterSwitch");
-      const priceElements = document.querySelectorAll(".price");
-      const gstTextElements = document.querySelectorAll(".gst-text");
-      const gstRate = 0.18; // 18% GST
-
-      filterSwitch.addEventListener("change", function () {
-        priceElements.forEach((element, index) => {
-          const originalPrice = parseFloat(element.dataset.originalPrice);
-          const priceWithGST = originalPrice * (1 + gstRate);
-
-          if (this.checked) {
-            // Display price with GST
-            element.textContent = `₹${priceWithGST.toLocaleString("en-IN")}`;
-            gstTextElements[index].style.display = "inline";
-          } else {
-            // Display original price
-            element.textContent = `₹${originalPrice.toLocaleString("en-IN")}`;
-            gstTextElements[index].style.display = "none";
-          }
-        });
-      });
-    });
-  </script>
-  <!-- <form action="/listings/new" method="get">
-      <button>click to create new</button>
-    </form> -->
-</body>
