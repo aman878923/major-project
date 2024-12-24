@@ -1,170 +1,180 @@
 <% layout("/layouts/boilerplate") %>
 
 <!-- Hero Section -->
-<div class="hero-section py-5 mb-5 bg-light">
+<section class="hero">
   <div class="container">
-    <h1 class="display-4 text-center mb-4 fw-bold">Discover Amazing Places</h1>
-    <p class="lead text-center text-muted mb-0">
-      Find and book unique accommodations around the world
-    </p>
+    <div class="hero-content text-center">
+      <h1 class="hero-title">Explore Extraordinary Places</h1>
+      <p class="hero-subtitle">
+        Discover unique stays and experiences around the world
+      </p>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- Filters Section -->
-<div class="container mb-5">
-  <div class="filters-wrapper">
-    <div class="filters-scroll">
-      <div class="d-flex gap-4 flex-nowrap">
-        <div class="filter-item">
-          <i class="fa-solid fa-arrow-trend-up"></i>
-          <span>Trending</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-swimming-pool"></i>
-          <span>Pools</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-mountain"></i>
-          <span>Views</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-tractor"></i>
-          <span>Farms</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-paint-brush"></i>
-          <span>Design</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-water"></i>
-          <span>Lakefront</span>
-        </div>
-        <div class="filter-item">
-          <i class="fas fa-umbrella-beach"></i>
-          <span>Beach</span>
-        </div>
+<!-- Category Filters -->
+<section class="categories">
+  <div class="container">
+    <div class="category-slider">
+      <div class="category-item active">
+        <i class="fas fa-fire"></i>
+        <span>Trending</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-swimming-pool"></i>
+        <span>Pools</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-mountain"></i>
+        <span>Mountains</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-umbrella-beach"></i>
+        <span>Beach</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-campground"></i>
+        <span>Camping</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-snowflake"></i>
+        <span>Arctic</span>
+      </div>
+      <div class="category-item">
+        <i class="fas fa-tree"></i>
+        <span>Forest</span>
       </div>
     </div>
 
-    <div class="tax-toggle">
+    <div class="price-toggle">
       <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="filterSwitch" />
-        <label class="form-check-label" for="filterSwitch"
-          >Show Total with Taxes</label
+        <input class="form-check-input" type="checkbox" id="taxToggle" />
+        <label class="form-check-label" for="taxToggle"
+          >Show prices with tax</label
         >
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- Listings Grid -->
-<div class="container">
-  <div class="row g-4">
-    <% for (let listing of allListing) { %>
-    <div class="col-12 col-md-6 col-lg-4">
-      <a href="/listings/<%= listing._id %>" class="text-decoration-none">
+<section class="listings">
+  <div class="container">
+    <div class="row g-4">
+      <% for (let listing of allListing) { %>
+      <div class="col-12 col-md-6 col-lg-4">
         <div class="listing-card">
-          <div class="listing-img-wrapper">
-            <img
-              src="<%= listing.image.url %>"
-              class="listing-img"
-              alt="<%= listing.title %>"
-            />
+          <div class="listing-image">
+            <img src="<%= listing.image.url %>" alt="<%= listing.title %>" />
+            <div class="listing-tag">Featured</div>
           </div>
           <div class="listing-content">
-            <h5 class="listing-title"><%= listing.title %></h5>
-            <p class="listing-price">
+            <h3 class="listing-title"><%= listing.title %></h3>
+            <div class="listing-meta">
+              <span class="location"
+                ><i class="fas fa-map-marker-alt"></i> <%= listing.location
+                %></span
+              >
               <span class="price" data-original-price="<%= listing.price %>">
                 ₹<%= listing.price.toLocaleString("en-IN") %>
               </span>
-              <span class="gst-text" style="display: none">(incl. GST)</span>
-            </p>
+            </div>
+            <a href="/listings/<%= listing._id %>" class="btn-view"
+              >View Details</a
+            >
           </div>
         </div>
-      </a>
+      </div>
+      <% } %>
     </div>
-    <% } %>
   </div>
-</div>
+</section>
 
 <style>
-  .hero-section {
-    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-    border-radius: 0 0 2rem 2rem;
+  .hero {
+    background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+    padding: 120px 0 80px;
+    margin-bottom: 60px;
+    border-radius: 0 0 40px 40px;
   }
 
-  .filters-wrapper {
-    background: #fff;
-    padding: 1rem;
-    border-radius: 1rem;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  .hero-content {
+    color: white;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+
+  .categories {
+    margin-bottom: 60px;
+  }
+
+  .category-slider {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .filters-scroll {
+    gap: 20px;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    padding: 20px 0;
     scrollbar-width: none;
-    flex-grow: 1;
   }
 
-  .filters-scroll::-webkit-scrollbar {
+  .category-slider::-webkit-scrollbar {
     display: none;
   }
 
-  .filter-item {
+  .category-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
+    gap: 8px;
+    padding: 15px 25px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: all 0.3s ease;
   }
 
-  .filter-item:hover {
-    background: #f8f9fa;
-    transform: translateY(-2px);
+  .category-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .filter-item i {
+  .category-item.active {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .category-item i {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: #212529;
-  }
-
-  .filter-item span {
-    font-size: 0.875rem;
-    color: #6c757d;
-    font-weight: 500;
-  }
-
-  .tax-toggle {
-    padding-left: 2rem;
-    border-left: 1px solid #dee2e6;
   }
 
   .listing-card {
-    background: #fff;
-    border-radius: 1rem;
+    background: white;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
   }
 
   .listing-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
 
-  .listing-img-wrapper {
+  .listing-image {
     position: relative;
-    padding-top: 66.67%;
-    overflow: hidden;
+    padding-top: 66%;
   }
 
-  .listing-img {
+  .listing-image img {
     position: absolute;
     top: 0;
     left: 0;
@@ -173,35 +183,72 @@
     object-fit: cover;
   }
 
+  .listing-tag {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.875rem;
+  }
+
   .listing-content {
-    padding: 1.5rem;
+    padding: 25px;
   }
 
   .listing-title {
-    color: #212529;
-    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
+    margin-bottom: 15px;
   }
 
-  .listing-price {
-    color: #0d6efd;
+  .listing-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .location {
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  .price {
     font-weight: 600;
-    margin: 0;
+    color: #3b82f6;
+    font-size: 1.25rem;
+  }
+
+  .btn-view {
+    display: block;
+    text-align: center;
+    background: #3b82f6;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-view:hover {
+    background: #2563eb;
+    color: white;
   }
 
   @media (max-width: 768px) {
-    .filters-wrapper {
-      flex-direction: column;
-      gap: 1rem;
+    .hero-title {
+      font-size: 2.5rem;
     }
 
-    .tax-toggle {
-      padding-left: 0;
-      border-left: none;
-      border-top: 1px solid #dee2e6;
-      padding-top: 1rem;
-      width: 100%;
-      text-align: center;
+    .category-item {
+      padding: 12px 20px;
+    }
+
+    .listing-content {
+      padding: 20px;
     }
   }
 </style>

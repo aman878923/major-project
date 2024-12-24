@@ -1,174 +1,380 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <!-- Listing Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5 fw-bold"><%= listing.title %></h1>
-        <span class="badge bg-primary px-3 py-2">By <%= owner.username %></span>
-      </div>
-
-      <!-- Main Image Card -->
-      <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
-        <img src="<%= listing.image.url %>" class="card-img-top" alt="Listing Image" style="height: 400px; object-fit: cover;">
-        
-        <div class="card-body p-4">
-          <div class="row">
-            <div class="col-md-8">
-              <p class="lead mb-4"><%= listing.description %></p>
-              
-              <div class="d-flex flex-wrap gap-3 mb-4">
-                <div class="feature-badge">
-                  <i class="bi bi-geo-alt-fill"></i>
-                  <%= listing.location %>
-                </div>
-                <div class="feature-badge">
-                  <i class="bi bi-globe"></i>
-                  <%= listing.country %>
-                </div>
-                <div class="feature-badge">
-                  <i class="bi bi-currency-rupee"></i>
-                  <%= listing.price.toLocaleString("en-IN") %>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
-            <div class="d-flex gap-3 mt-4">
-              <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary px-4">
-                <i class="bi bi-pencil-square me-2"></i>Update
-              </a>
-              <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
-                <button type="submit" class="btn btn-dark px-4">
-                  <i class="bi bi-trash me-2"></i>Delete
-                </button>
-              </form>
-            </div>
-          <% } %>
-        </div>
-      </div>
-
-      <!-- Reviews Section -->
-      <% if (currUser) { %>
-        <div class="card border-0 shadow-sm rounded-4 mb-5">
-          <div class="card-body p-4">
-            <h3 class="card-title mb-4">Leave a Review</h3>
-            <form action="/listings/<%= listing._id %>/reviews" method="post" novalidate class="needs-validation">
-              <div class="mb-4">
-                <fieldset class="starability-slot">
-                  <legend class="fw-bold mb-3">Rating:</legend>
-                  <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
-                  <input type="radio" id="first-rate1" name="rating" value="1" />
-                  <label for="first-rate1" title="Terrible">1 star</label>
-                  <input type="radio" id="first-rate2" name="rating" value="2" />
-                  <label for="first-rate2" title="Not good">2 stars</label>
-                  <input type="radio" id="first-rate3" name="rating" value="3" />
-                  <label for="first-rate3" title="Average">3 stars</label>
-                  <input type="radio" id="first-rate4" name="rating" value="4" />
-                  <label for="first-rate4" title="Very good">4 stars</label>
-                  <input type="radio" id="first-rate5" name="rating" value="5" />
-                  <label for="first-rate5" title="Amazing">5 stars</label>
-                </fieldset>
-              </div>
-
-              <div class="mb-4">
-                <label for="comment" class="form-label fw-bold">Your Comments</label>
-                <textarea name="comment" id="comment" class="form-control" rows="4" required placeholder="Share your experience..."></textarea>
-                <div class="invalid-feedback">Please enter some comments</div>
-              </div>
-
-              <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-send me-2"></i>Submit Review
-              </button>
-            </form>
-          </div>
-        </div>
-      <% } %>
-
-      <!-- Reviews List -->
-      <% if (!reviw.length==0) { %>
-        <div class="reviews-section mb-5">
-          <h3 class="mb-4">All Reviews</h3>
-          <div class="row g-4">
-            <% for (let review of reviw) { %>
-              <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm rounded-4">
-                  <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h5 class="card-title mb-0">@<%= review.author.username %></h5>
-                      <div class="rating" style="transform: scale(0.65)">
-                        <p class="starability-result" data-rating="<%= review.rating %>">
-                          Rated: <%= review.rating %> stars
-                        </p>
-                      </div>
-                    </div>
-                    <p class="card-text"><%= review.comment %></p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                      <small class="text-muted">
-                        <%= review.createdAt.toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) %>
-                      </small>
-                      <% if (currUser && review.author._id.equals(currUser._id)) { %>
-                        <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>" method="post">
-                          <button class="btn btn-sm btn-dark">
-                            <i class="bi bi-trash me-1"></i>Delete
-                          </button>
-                        </form>
-                      <% } %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% } %>
-          </div>
-        </div>
-      <% } %>
-
-      <!-- Map Section -->
-      <div class="card border-0 shadow-sm rounded-4 mb-5">
-        <div class="card-body p-4">
-          <h3 class="mb-4">Location</h3>
-          <div id="map" style="height: 400px; border-radius: 12px;"></div>
+<div class="listing-container">
+  <!-- Header Section -->
+  <section class="listing-header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="display-4 fw-bold"><%= listing.title %></h1>
+        <div class="header-meta">
+          <span class="owner-badge">
+            <i class="bi bi-person-circle"></i>
+            Hosted by <%= owner.username %>
+          </span>
+          <span class="location-badge">
+            <i class="bi bi-geo-alt"></i>
+            <%= listing.location %>, <%= listing.country %>
+          </span>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Image Gallery -->
+  <section class="listing-gallery">
+    <div class="container">
+      <div class="gallery-wrapper">
+        <img
+          src="<%= listing.image.url %>"
+          alt="<%= listing.title %>"
+          class="main-image"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Listing Details -->
+  <section class="listing-details">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Description -->
+          <div class="detail-card">
+            <h2>About this place</h2>
+            <p class="lead"><%= listing.description %></p>
+            <div class="price-tag">
+              <span class="amount"
+                >₹<%= listing.price.toLocaleString("en-IN") %></span
+              >
+              <span class="per-night">per night</span>
+            </div>
+
+            <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
+            <div class="action-buttons">
+              <a href="/listings/<%= listing._id %>/edit" class="btn btn-edit">
+                <i class="bi bi-pencil"></i> Edit Listing
+              </a>
+              <form
+                action="/listings/<%= listing._id %>?_method=DELETE"
+                method="post"
+                class="d-inline"
+              >
+                <button class="btn btn-delete">
+                  <i class="bi bi-trash"></i> Delete Listing
+                </button>
+              </form>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Reviews Section -->
+          <div class="detail-card">
+            <h2>Guest Reviews</h2>
+            <% if (currUser) { %>
+            <form
+              action="/listings/<%= listing._id %>/reviews"
+              method="post"
+              class="review-form"
+            >
+              <div class="rating-wrapper">
+                <fieldset class="starability-slot">
+                  <legend>Rate your experience:</legend>
+                  <input
+                    type="radio"
+                    id="no-rate"
+                    name="rating"
+                    value="0"
+                    checked
+                  />
+                  <input type="radio" id="rate1" name="rating" value="1" />
+                  <label for="rate1">1 star</label>
+                  <input type="radio" id="rate2" name="rating" value="2" />
+                  <label for="rate2">2 stars</label>
+                  <input type="radio" id="rate3" name="rating" value="3" />
+                  <label for="rate3">3 stars</label>
+                  <input type="radio" id="rate4" name="rating" value="4" />
+                  <label for="rate4">4 stars</label>
+                  <input type="radio" id="rate5" name="rating" value="5" />
+                  <label for="rate5">5 stars</label>
+                </fieldset>
+              </div>
+
+              <div class="form-floating mb-3">
+                <textarea
+                  class="form-control"
+                  name="comment"
+                  placeholder="Share your experience"
+                  style="height: 100px"
+                ></textarea>
+                <label>Your review</label>
+              </div>
+
+              <button type="submit" class="btn btn-submit">Post Review</button>
+            </form>
+            <% } %>
+
+            <!-- Reviews List -->
+            <div class="reviews-list">
+              <% for(let review of reviw) { %>
+              <div class="review-card">
+                <div class="review-header">
+                  <div class="reviewer-info">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="reviewer-name"
+                      >@<%= review.author.username %></span
+                    >
+                  </div>
+                  <div class="review-rating">
+                    <p
+                      class="starability-result"
+                      data-rating="<%= review.rating %>"
+                    ></p>
+                  </div>
+                </div>
+                <p class="review-text"><%= review.comment %></p>
+                <div class="review-footer">
+                  <span class="review-date">
+                    <%= review.createdAt.toLocaleString('en-US', { dateStyle:
+                    'medium' }) %>
+                  </span>
+                  <% if (currUser && review.author._id.equals(currUser._id)) {
+                  %>
+                  <form
+                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>"
+                    method="post"
+                  >
+                    <button class="btn btn-sm btn-delete-review">Delete</button>
+                  </form>
+                  <% } %>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="col-lg-4">
+          <div class="map-card">
+            <h3>Location</h3>
+            <div id="map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <style>
-.feature-badge {
-  background-color: #f8f9fa;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+  .listing-container {
+    padding-top: 2rem;
+  }
 
-.card {
-  transition: transform 0.2s ease;
-}
+  .listing-header {
+    margin-bottom: 2rem;
+  }
 
-.card:hover {
-  transform: translateY(-5px);
-}
+  .header-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
 
-.btn {
-  transition: all 0.3s ease;
-}
+  .owner-badge,
+  .location-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border-radius: 50px;
+    font-size: 0.9rem;
+  }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+  .gallery-wrapper {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
 
-#map {
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
-}
+  .main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+  }
+
+  .detail-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .price-tag {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 1rem;
+    display: inline-block;
+  }
+
+  .amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2563eb;
+  }
+
+  .per-night {
+    color: #6b7280;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-edit {
+    background: #2563eb;
+    color: white;
+  }
+
+  .btn-delete {
+    background: #dc2626;
+    color: white;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .review-form {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .review-card {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .map-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 2rem;
+  }
+
+  #map {
+    height: 400px;
+    border-radius: 1rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .main-image {
+      height: 300px;
+    }
+
+    .header-meta {
+      flex-direction: column;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .map-card {
+      position: static;
+      margin-bottom: 2rem;
+    }
+  }
 </style>
-
 <script>
   // Your existing map script here
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize the map
+    var map = L.map("map").setView([51.505, -0.09], 13); // Default location (London)
+
+    // Load OpenStreetMap tiles
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
+
+    // Marker for the searched location
+    var marker;
+
+    // Replace this value with dynamic data from your server-side template engine
+    var location = "<%= listing.title %>"; // Example: "New York"
+
+    if (location) {
+      // Fetch data from Nominatim API
+      var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        location
+      )}`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.length > 0) {
+            var lat = parseFloat(data[0].lat);
+            var lon = parseFloat(data[0].lon);
+            var displayName = data[0].display_name;
+
+            // Update map view and add marker
+            map.setView([lat, lon], 13);
+
+            if (marker) {
+              map.removeLayer(marker); // Remove the previous marker
+            }
+
+            marker = L.marker([lat, lon]).addTo(map);
+            marker.bindPopup(`<b>${displayName}</b>`).openPopup();
+          } else {
+            alert("Location not found.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching location:", error);
+          alert("Error fetching location. Please try again.");
+        });
+    } else {
+      console.error("No location provided.");
+      alert("No location provided to display on the map.");
+    }
+  });
 </script>
