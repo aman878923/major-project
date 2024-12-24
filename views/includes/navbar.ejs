@@ -1,75 +1,75 @@
-<nav
-  class="navbar navbar-expand-lg py-3 navbar-light bg-white fixed-top shadow-sm"
->
+<nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand d-flex align-items-center" href="/listings">
-      <i class="fa-regular fa-compass fs-3 text-primary me-2"></i>
-      <span class="fw-bold">WanderLust</span>
+    <a class="navbar-brand" href="/listings">
+      <div class="brand-content">
+        <i class="fa-regular fa-compass"></i>
+        <span>WanderLust</span>
+      </div>
     </a>
 
-    <!-- Mobile Toggle -->
+    <!-- Mobile Menu Button -->
     <button
-      class="navbar-toggler border-0"
-      type="button"
+      class="menu-toggle"
       data-bs-toggle="collapse"
-      data-bs-target="#navbarContent"
+      data-bs-target="#navContent"
     >
-      <span class="navbar-toggler-icon"></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
 
-    <!-- Navbar Content -->
-    <div class="collapse navbar-collapse" id="navbarContent">
+    <!-- Main Navigation -->
+    <div class="collapse navbar-collapse" id="navContent">
       <!-- Search Bar -->
-      <form
-        class="nav-search mx-lg-auto"
-        action="/listings/search"
-        method="GET"
-      >
-        <div class="input-group">
-          <input
-            type="search"
-            class="form-control search-input"
-            placeholder="Search destinations..."
-            name="search"
-          />
-          <button class="btn btn-primary" type="submit">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </form>
+      <div class="search-container">
+        <form action="/listings/search" method="GET">
+          <div class="search-box">
+            <input
+              type="search"
+              name="search"
+              placeholder="Discover destinations..."
+            />
+            <button type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
 
       <!-- Navigation Links -->
-      <ul class="navbar-nav ms-auto align-items-center">
+      <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link px-3" href="/listings">Explore</a>
+          <a href="/listings" class="nav-link">
+            <i class="fas fa-compass"></i>
+            <span>Explore</span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3" href="/listings/new">List Property</a>
+          <a href="/listings/new" class="nav-link">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Listing</span>
+          </a>
         </li>
 
         <% if (!currUser) { %>
         <li class="nav-item">
-          <a class="nav-link px-3" href="/signup">Sign Up</a>
+          <a href="/signup" class="nav-link btn-signup">Sign Up</a>
         </li>
         <li class="nav-item">
-          <a class="btn btn-primary px-3" href="/login">Log In</a>
+          <a href="/login" class="nav-link btn-login">Login</a>
         </li>
         <% } else { %>
         <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
-            <i class="fas fa-user-circle me-1"></i>
-            <%= currUser.username %>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <div class="user-menu">
+              <i class="fas fa-user-circle"></i>
+              <span><%= currUser.username %></span>
+            </div>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end">
+          <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/listings">My Listings</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+            <li><a class="dropdown-item" href="/logout">Logout</a></li>
           </ul>
         </li>
         <% } %>
@@ -80,74 +80,159 @@
 
 <style>
   .navbar {
-    backdrop-filter: blur(8px);
-    background-color: rgba(255, 255, 255, 0.95) !important;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
   }
 
-  .nav-search {
+  .brand-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+
+  .search-container {
+    flex: 1;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .search-box {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 50px;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .search-box:focus-within {
+    background: white;
+    box-shadow: 0 0 0 2px #2563eb;
+  }
+
+  .search-box input {
     width: 100%;
-    max-width: 500px;
+    border: none;
+    background: none;
+    padding: 0.5rem 1rem;
+    outline: none;
   }
 
-  .search-input {
-    border-radius: 50px 0 0 50px;
-    border: 1px solid #dee2e6;
-    padding-left: 1.5rem;
+  .search-box button {
+    background: #2563eb;
+    border: none;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
   }
 
-  .search-input:focus {
-    box-shadow: none;
-    border-color: #0d6efd;
+  .search-box button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
   }
 
-  .nav-search .btn {
-    border-radius: 0 50px 50px 0;
-    padding: 0.6rem 1.5rem;
+  .navbar-nav {
+    gap: 1rem;
+    align-items: center;
   }
 
   .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: all 0.3s ease;
   }
 
-  .nav-link:hover {
-    color: #0d6efd;
+  .btn-signup {
+    color: #2563eb;
+  }
+
+  .btn-login {
+    background: #2563eb;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+  }
+
+  .btn-login:hover {
+    background: #1d4ed8;
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .dropdown-menu {
+    background: white;
     border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    margin-top: 1rem;
   }
 
   .dropdown-item {
-    padding: 0.7rem 1.5rem;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease;
   }
 
-  .dropdown-item:active {
-    background-color: #0d6efd;
+  .dropdown-item:hover {
+    background: #f1f5f9;
   }
 
-  @media (max-width: 991.98px) {
-    .nav-search {
-      margin: 1rem 0;
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: #2563eb;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 991px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    .navbar-collapse {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     .navbar-nav {
-      padding: 1rem 0;
+      gap: 0.5rem;
     }
 
     .nav-link {
-      padding: 0.5rem 0;
+      padding: 0.75rem;
     }
 
-    .btn {
-      width: 100%;
-      margin: 0.5rem 0;
+    .search-container {
+      margin: 1rem 0;
     }
   }
 
-  /* Add margin to main content to account for fixed navbar */
   body {
     padding-top: 76px;
   }
